@@ -1,0 +1,20 @@
+# dependencias
+node_modules
+
+# .md do backend
+AGENTS.md
+README.md
+
+# arquivos compilados
+dist
+
+# Keep environment variables out of version control
+.env
+
+/src/generated/prisma
+
+# ai
+.agents
+.claude
+.windsurf
+skills-lock.json
