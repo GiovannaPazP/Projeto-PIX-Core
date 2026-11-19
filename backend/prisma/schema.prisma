@@ -12,3 +12,34 @@ datasource db {
   provider = "sqlite"
 }
 
+model User {
+  id                Int         @id @default(autoincrement())
+  cpf               String      @unique
+  hashedPassword    String
+  balance           Decimal   
+
+  pixKeys           PixKey[]    
+  sentTransfers     Transfer[]  @relation("Sent")
+  receivedTransfers Transfer[]  @relation("Received")
+}
+
+model PixKey {
+  id              Int       @id @default(autoincrement())
+  userId          Int       
+  keyType         String
+  keyValue        String    @unique
+
+  user            User      @relation(fields: [userId], references: [id])
+}
+
+model Transfer {
+  id              Int       @id @default(autoincrement())
+  idempotencyKey  String    @unique
+  senderId        Int       
+  receiverId      Int
+  amount          Decimal
+  createdAt       DateTime  @default(now())
+
+  sender          User      @relation("Sent", fields: [senderId], references: [id], onDelete: Restrict)
+  receiver        User      @relation("Received", fields: [receiverId], references: [id], onDelete: Restrict)
+}
