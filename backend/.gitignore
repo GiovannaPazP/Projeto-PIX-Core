@@ -21,3 +21,6 @@ skills-lock.json
 
 # banco
 *.db
+
+# arquivo de compilação
+tsconfig.build.tsbuildinfo
