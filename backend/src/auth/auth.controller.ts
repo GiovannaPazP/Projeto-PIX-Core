@@ -6,8 +6,9 @@ import { LoginDto } from './dto/login.dto/login.dto.js';
 export class AuthController {
     constructor(private readonly authService: AuthService){}
 
-    @HttpCode(HttpStatus.OK)
     @Post('login')
+    @HttpCode(HttpStatus.OK) //alterando a resposta de sucesso para 200
+    //body acesso ao corpo da requisição
     signIn(@Body() data: LoginDto){
         return this.authService.signIn(data.cpf, data.pass);
     }
