@@ -1,0 +1,67 @@
+import { Injectable, ConflictException, NotFoundException, BadRequestException } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service.js';
+import { Prisma } from '../generated/prisma/client.js';
+import { cpf } from 'cpf-cnpj-validator';
+import { isEmail } from 'class-validator';
+import { randomUUID } from 'node:crypto';
+
+@Injectable()
+export class PixService {
+    constructor(
+        private readonly prisma: PrismaService,
+    ){}
+
+    pixRandomKey(){
+        // 36 caracteres gerados aleatoriamente
+        return randomUUID(); 
+    }
+
+    pixKeyValidation(keyType: string, keyValue: string): void{
+        if(keyType === 'CPF'){
+            //verifica se tem 11 digítos
+            if(!/^\d{11}$/.test(keyValue) || !cpf.isValid(keyValue)){
+                throw new BadRequestException('CPF inválido.');
+            }
+        }
+        else if(keyType === 'EMAIL'){
+            if(!isEmail(keyValue)){
+                throw new BadRequestException('Email inválido.');
+            }
+        }
+    }
+
+    async createPixKey(userId: number, keyType: string, keyValue?: string){
+        
+        if(keyType === 'ALEATORIA'){
+            keyValue = this.pixRandomKey()
+        }
+        else{
+            //estou supondo/garantindo que a criação de uma nova chave sempre passa pelo DTO
+            this.pixKeyValidation(keyType, keyValue!) 
+        }
+        
+        try{
+            return await this.prisma.pixKey.create({
+                data:{
+                    keyType: keyType,
+                    keyValue: keyValue!,
+                    user: { //relação enter PixKey e User
+                        connect:{id: userId} //tenta associar o userId a um existente
+                    }
+                }
+            });
+        } catch(error){
+            if(error instanceof Prisma.PrismaClientKnownRequestError){
+                // erro de conflito, violação da unicidade
+                if(error.code === 'P2002'){
+                    throw new ConflictException('Chave Pix já cadastrada.');
+                }
+                if(error.code === 'P2025'){
+                    throw new NotFoundException('Usuário não encontrado.');
+                }
+            }
+            // para caso seja um erro não identificado
+            throw error;
+        }
+    }
+}
