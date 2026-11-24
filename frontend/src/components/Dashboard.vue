@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import AccountSummary from './AccountSummary.vue'
+import AccountSummary from './AccountSummary.vue';
+import PixKeyForm from './PixKeyForm.vue';
 
 </script>
 
@@ -8,5 +9,6 @@ import AccountSummary from './AccountSummary.vue'
 
     <main>
         <AccountSummary />
+        <PixKeyForm />
     </main>
 </template>
