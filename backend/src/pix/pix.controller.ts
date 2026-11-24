@@ -1,4 +1,4 @@
-import { Body, Req, Controller, Post, UseGuards, Headers, BadRequestException } from '@nestjs/common';
+import { Body, Req, Controller, Post, UseGuards, Headers, BadRequestException, Get } from '@nestjs/common';
 import { PixService } from './pix.service.js';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth/jwt-auth.guard.js';
 import { CreatePixKeyDto } from './dto/create-pix-key.dto/create-pix-key.dto.js';
@@ -32,5 +32,14 @@ export class PixController {
 
         const userId = request.user.sub;
         return this.pixService.transferPix(userId, idempotencyKey, data.pixKeyReceiver, data.amount)
+    }
+
+    @Get('transfers')
+    @UseGuards(JwtAuthGuard)
+    getTransfers(
+        @Req() request: {user: {sub: number}}
+    ){
+        const userId = request.user.sub;
+        return this.pixService.getTransfers(userId)
     }
 }

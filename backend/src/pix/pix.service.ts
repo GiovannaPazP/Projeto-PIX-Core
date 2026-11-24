@@ -11,6 +11,8 @@ export class PixService {
         private readonly prisma: PrismaService,
     ){}
 
+
+    //criação de chave
     pixRandomKey(){
         // 36 caracteres gerados aleatoriamente
         return randomUUID(); 
@@ -65,6 +67,8 @@ export class PixService {
         }
     }
 
+
+    //transferencia
     async findUserId(pixKey: string): Promise<number>{
         const key = await this.prisma.pixKey.findUnique({
             where: {keyValue: pixKey},
@@ -170,5 +174,19 @@ export class PixService {
 
             throw error;
         }
+    }
+
+
+    //retornar a lista de transferencias
+    async getTransfers(userId: number){
+        return this.prisma.transfer.findMany({
+            where: {
+                OR: [
+                    {senderId: userId},
+                    {receiverId: userId}
+                ]
+            }
+        });
+
     }
 }
