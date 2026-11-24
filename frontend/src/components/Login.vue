@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import router from '../router';
 
 
 const cpf = ref('')
@@ -25,6 +26,7 @@ async function Login(){
     if(response.ok){
         console.log('Login realizado com sucesso');
         sessionStorage.setItem('token', data.access_token);
+        router.push('/dashboard');
     }
     else{
         errorMessage.value = data.message;
