@@ -1,0 +1,757 @@
+type: collection.insomnia.rest/5.0
+schema_version: "5.1"
+name: Pix API
+meta:
+  id: wrk_69bf794c0eda40e3bdaaa86ef1921fb6
+  created: 1795404392222
+  modified: 1795404392222
+  description: ""
+collection:
+  - url: http://localhost:3000/auth/login
+    name: Login Cliente1
+    meta:
+      id: req_50edff31a0f34063860729d805dd7a45
+      created: 1795404421832
+      modified: 1795405507490
+      isPrivate: false
+      description: ""
+      sortKey: -1795404421834
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "cpf": "58371309007",
+          "pass": "12345678"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+    scripts:
+      afterResponse: |-
+        if (insomnia.response.code === 200) {
+          const body = insomnia.response.json();
+          insomnia.environment.set('token', body.access_token);
+        }
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:3000/auth/login
+    name: Login Cliente2
+    meta:
+      id: req_640eb46f25e94f59bed9d8ed2c27b8f0
+      created: 1795404702854
+      modified: 1795405532384
+      isPrivate: false
+      description: ""
+      sortKey: -1795404421784
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "cpf": "63523759013",
+          "pass": "123abcde"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+    scripts:
+      afterResponse: |-
+        if (insomnia.response.code === 200) {
+          const body = insomnia.response.json();
+          insomnia.environment.set('token', body.access_token);
+        }
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:3000/account/balance
+    name: Consultar Saldo
+    meta:
+      id: req_78a41669007d41c7a8cd6753f182e09e
+      created: 1795405353925
+      modified: 1795480114826
+      isPrivate: false
+      description: ""
+      sortKey: -1795405353925
+    method: GET
+    body:
+      mimeType: application/json
+      text: ""
+    headers:
+      - name: Content-Type
+        value: application/json
+    authentication:
+      type: bearer
+      token: "{{ token }}"
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - name: Cadastro Chave Pix
+    meta:
+      id: fld_8d180f2c26564cf18f90f4cef9f85926
+      created: 1795405954170
+      modified: 1795405954170
+      sortKey: -1795405954174
+      description: ""
+    children:
+      - url: http://localhost:3000/pix/keys
+        name: Email
+        meta:
+          id: req_a4cc4df653f84f439f85008efaf4036d
+          created: 1795405463649
+          modified: 1795478726983
+          isPrivate: false
+          description: >-
+            # Cadastro de Chaves Pix
+
+
+            **Endpoint:** `POST /pix/keys`
+
+
+            **Descrição:** Cadastra uma chave Pix vinculada ao usuário
+            autenticado.
+
+
+            **Autenticação:** Obrigatória — JWT enviado pelo header
+            `Authorization: Bearer <token>`.
+
+
+            ## Tipos de chave aceitos
+
+
+            | Tipo | Descrição | Valor |
+
+            |---|---|---|
+
+            | `CPF` | CPF válido com 11 dígitos | Obrigatório |
+
+            | `EMAIL` | Endereço de e-mail válido | Obrigatório |
+
+            | `ALEATORIA` | UUID gerado pelo backend | Não necessário |
+
+
+            O identificador do usuário é obtido pelo JWT.
+
+
+            ## Testes e respostas esperadas
+
+
+            | Cenário | Status HTTP | Resultado |
+
+            |---|---|---|
+
+            | Cadastro de CPF/email válido | `201 Created` | Chave cadastrada |
+
+            | Cadastro de chave aleatória | `201 Created` | UUID gerado e
+            cadastrado |
+
+            | CPF inválido | `400 Bad Request` | CPF inválido |
+
+            | E-mail inválido | `400 Bad Request` | E-mail inválido |
+
+            | CPF/e-mail sem valor | `400 Bad Request` | Campo obrigatório |
+
+            | Chave já cadastrada | `409 Conflict` | Chave Pix já cadastrada |
+
+            | Requisição sem JWT | `401 Unauthorized` | Acesso não autorizado |
+
+            | JWT inválido ou expirado | `401 Unauthorized` | Acesso não
+            autorizado |
+
+
+
+            ## Observações
+
+
+            - O `CreatePixKeyDto` verifica os tipos permitidos e a
+            obrigatoriedade dos campos.
+
+            - O `PixService` valida o formato do CPF e do e-mail.
+
+            - O `JwtAuthGuard` identifica o usuário autenticado.
+
+            - Chaves aleatórias são geradas exclusivamente pelo backend.
+          sortKey: -1795405958339
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "keyType": "EMAIL",
+              "keyValue": "teste.pix@example.com"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ token }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3000/pix/keys
+        name: Aleatoria
+        meta:
+          id: req_f1606b0ba25140248c01d7b432d318f4
+          created: 1795405977560
+          modified: 1795406409254
+          isPrivate: false
+          description: >-
+            # Cadastro de Chaves Pix
+
+
+            **Endpoint:** `POST /pix/keys`
+
+
+            **Descrição:** Cadastra uma chave Pix vinculada ao usuário
+            autenticado.
+
+
+            **Autenticação:** Obrigatória — JWT enviado pelo header
+            `Authorization: Bearer <token>`.
+
+
+            ## Tipos de chave aceitos
+
+
+            | Tipo | Descrição | Valor |
+
+            |---|---|---|
+
+            | `CPF` | CPF válido com 11 dígitos | Obrigatório |
+
+            | `EMAIL` | Endereço de e-mail válido | Obrigatório |
+
+            | `ALEATORIA` | UUID gerado pelo backend | Não necessário |
+
+
+            O identificador do usuário é obtido pelo JWT.
+
+
+            ## Testes e respostas esperadas
+
+
+            | Cenário | Status HTTP | Resultado |
+
+            |---|---|---|
+
+            | Cadastro de CPF/email válido | `201 Created` | Chave cadastrada |
+
+            | Cadastro de chave aleatória | `201 Created` | UUID gerado e
+            cadastrado |
+
+            | CPF inválido | `400 Bad Request` | CPF inválido |
+
+            | E-mail inválido | `400 Bad Request` | E-mail inválido |
+
+            | CPF/e-mail sem valor | `400 Bad Request` | Campo obrigatório |
+
+            | Chave já cadastrada | `409 Conflict` | Chave Pix já cadastrada |
+
+            | Requisição sem JWT | `401 Unauthorized` | Acesso não autorizado |
+
+            | JWT inválido ou expirado | `401 Unauthorized` | Acesso não
+            autorizado |
+
+
+            ### Saída esperada
+
+            ```json
+
+            {
+            	"id": 4,
+            	"userId": 2,
+            	"keyType": "ALEATORIA",
+            	"keyValue": "85ec761b-47f4-48a4-b85f-e2e7e9130582"
+            }
+
+            ```
+
+
+
+            ## Observações
+
+
+            - O `CreatePixKeyDto` verifica os tipos permitidos e a
+            obrigatoriedade dos campos.
+
+            - O `PixService` valida o formato do CPF e do e-mail.
+
+            - O `JwtAuthGuard` identifica o usuário autenticado.
+
+            - Chaves aleatórias são geradas exclusivamente pelo backend.
+          sortKey: -1795405656132
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "keyType": "ALEATORIA"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ token }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3000/pix/keys
+        name: CPF
+        meta:
+          id: req_a4373f7ce04d4c748f4703596962af51
+          created: 1795406006933
+          modified: 1795406325401
+          isPrivate: false
+          description: >-
+            # Cadastro de Chaves Pix
+
+
+            **Endpoint:** `POST /pix/keys`
+
+
+            **Descrição:** Cadastra uma chave Pix vinculada ao usuário
+            autenticado.
+
+
+            **Autenticação:** Obrigatória — JWT enviado pelo header
+            `Authorization: Bearer <token>`.
+
+
+            ## Tipos de chave aceitos
+
+
+            | Tipo | Descrição | Valor |
+
+            |---|---|---|
+
+            | `CPF` | CPF válido com 11 dígitos | Obrigatório |
+
+            | `EMAIL` | Endereço de e-mail válido | Obrigatório |
+
+            | `ALEATORIA` | UUID gerado pelo backend | Não necessário |
+
+
+            O identificador do usuário é obtido pelo JWT.
+
+
+            ## Testes e respostas esperadas
+
+
+            | Cenário | Status HTTP | Resultado |
+
+            |---|---|---|
+
+            | Cadastro de CPF/email válido | `201 Created` | Chave cadastrada |
+
+            | Cadastro de chave aleatória | `201 Created` | UUID gerado e
+            cadastrado |
+
+            | CPF inválido | `400 Bad Request` | CPF inválido |
+
+            | E-mail inválido | `400 Bad Request` | E-mail inválido |
+
+            | CPF/e-mail sem valor | `400 Bad Request` | Campo obrigatório |
+
+            | Chave já cadastrada | `409 Conflict` | Chave Pix já cadastrada |
+
+            | Requisição sem JWT | `401 Unauthorized` | Acesso não autorizado |
+
+            | JWT inválido ou expirado | `401 Unauthorized` | Acesso não
+            autorizado |
+
+
+
+            ## Observações
+
+
+            - O `CreatePixKeyDto` verifica os tipos permitidos e a
+            obrigatoriedade dos campos.
+
+            - O `PixService` valida o formato do CPF e do e-mail.
+
+            - O `JwtAuthGuard` identifica o usuário autenticado.
+
+            - Chaves aleatórias são geradas exclusivamente pelo backend.
+          sortKey: -1795405505028.5
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "keyType": "CPF",
+              "keyValue": ""
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{{ token }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: Transferências
+    meta:
+      id: fld_b8663d7fb316479fb937dc6d7f1a77b2
+      created: 1795478678866
+      modified: 1795478678866
+      sortKey: -1795478678867
+      description: ""
+    children:
+      - url: http://localhost:3000/pix/transfer
+        name: Saldo Insuficiente
+        meta:
+          id: req_6d1982a9747444bda4962db45e7e0911
+          created: 1795478685277
+          modified: 1795479379531
+          isPrivate: false
+          description: ""
+          sortKey: -1795478685277
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "pixKeyReceiver": "teste.pix@example.com",
+              "amount": "9999.00"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: Idempotency-Key
+            value: 8e14684b-ae9e-4eb7-b9fd-5a0fb6c9f1a3
+            description: ""
+            disabled: false
+        authentication:
+          type: bearer
+          token: "{{token}}"
+          prefix: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3000/pix/transfer
+        name: Chave Inexistente
+        meta:
+          id: req_d36f7b12ae1a45aa8e1a100cd87e4b04
+          created: 1795479390390
+          modified: 1795479394016
+          isPrivate: false
+          description: ""
+          sortKey: -1795442321808
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "pixKeyReceiver": "teste.pixexample.com",
+              "amount": "9999.00"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: Idempotency-Key
+            value: 8e14684b-ae9e-4eb7-b9fd-5a0fb6c9f1a3
+            description: ""
+            disabled: false
+        authentication:
+          type: bearer
+          token: "{{token}}"
+          prefix: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3000/pix/transfer
+        name: Valor Incorreto
+        meta:
+          id: req_9eda54d04205407bb411e7a94f471a43
+          created: 1795479416240
+          modified: 1795479923244
+          isPrivate: false
+          description: >-
+            # Transferência
+
+
+            **Endpoint:** `POST /pix/transfer`
+
+
+            **Descrição:** Transferir via usuário autenticado.
+
+
+            **Autenticação:** Obrigatória — JWT enviado pelo header
+            `Authorization: Bearer <token>`.
+
+
+            ## Tipos de chave do destinatário aceitas
+
+
+            | Tipo | Descrição |
+
+            |---|---|
+
+            | `CPF` | CPF válido com 11 dígitos |
+
+            | `EMAIL` | Endereço de e-mail válido |
+
+            | `ALEATORIA` | UUID (v4) |
+
+
+            O identificador do usuário é obtido pelo JWT.
+
+            A chave de idempotência (```Idempotency-Key```) é gerada pelo
+            frontend e mandada no Header.
+
+
+            ## Valores Incorretos (não aceitos)
+
+
+            ### valores negativos
+
+            ```json
+
+            {
+              "pixKeyReceiver": "teste.pix@example.com",
+              "amount": "-1.00"
+            }
+
+            ```
+
+
+            ### valor == "0"
+
+            ```json
+
+            {
+              "pixKeyReceiver": "teste.pix@example.com",
+              "amount": "0.00"
+            }
+
+            ```
+
+
+            ### valores numéricos
+
+            ```json
+
+            {
+              "pixKeyReceiver": "teste.pix@example.com",
+              "amount": 9999.99
+            }
+
+            ```
+
+
+            ### valores não informados
+
+            ```json
+
+            {
+              "pixKeyReceiver": "",
+              "amount": ""
+            }
+
+            ```
+          sortKey: -1795460503542.5
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "pixKeyReceiver": "teste.pix@example.com",
+              "amount": 9999.99
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: Idempotency-Key
+            value: 8e14684b-ae9e-4eb7-b9fd-5a0fb6c9f1a3
+            description: ""
+            disabled: false
+        authentication:
+          type: bearer
+          token: "{{token}}"
+          prefix: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3000/pix/transfer
+        name: Sem Chave de Idempotência
+        meta:
+          id: req_9bf11f6a09004ff38113f28694530454
+          created: 1795479943497
+          modified: 1795480049254
+          isPrivate: false
+          description: >-
+            # Transferência
+
+
+            **Endpoint:** `POST /pix/transfer`
+
+
+            **Descrição:** Transferir via usuário autenticado.
+
+
+            **Autenticação:** Obrigatória — JWT enviado pelo header
+            `Authorization: Bearer <token>`.
+
+
+            ## Idempotency-Key
+
+
+            A chave de idempotência (```Idempotency-Key```) é gerada pelo
+            frontend e mandada no Header.
+
+
+            Não mandar no Header ou mandar no formato incorreto resultada em
+            erro 400.
+          sortKey: -1795469594409.75
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "pixKeyReceiver": "teste.pix@example.com",
+              "amount": "9999.00"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: Idempotency-Key
+            value: 8e14684b-ae9e-4eb7-b9fd0fb6c9f1a3
+            description: ""
+            disabled: false
+        authentication:
+          type: bearer
+          token: "{{token}}"
+          prefix: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3000/pix/transfer
+        name: Transferência Válida
+        meta:
+          id: req_18f232b0fd2145cd9b7afa2c43b2d712
+          created: 1795480069949
+          modified: 1795481400764
+          isPrivate: false
+          description: ""
+          sortKey: -1795474139843.375
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "pixKeyReceiver": "bca56d37-be0e-4b89-beee-c1cf7b096900",
+              "amount": "40.00"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: Idempotency-Key
+            value: 8e14684b-ae9e-4eb7-b9fd-5a0fb6c9f1a3
+            description: ""
+            disabled: false
+        authentication:
+          type: bearer
+          token: "{{token}}"
+          prefix: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3000/pix/transfers
+        name: Histórico de Transferências
+        meta:
+          id: req_74d35e97b8bc4cd88cbd59150b9b8c1d
+          created: 1795481402343
+          modified: 1795481567844
+          isPrivate: false
+          description: ""
+          sortKey: -1795481402343
+        method: GET
+        authentication:
+          type: bearer
+          token: "{{token}}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_be23f91c5d4c256dfc89dc4a2e89c65f09beac4d
+    created: 1795404392253
+    modified: 1795482292011
+environments:
+  name: Base Environment
+  meta:
+    id: env_be23f91c5d4c256dfc89dc4a2e89c65f09beac4d
+    created: 1795404392247
+    modified: 1795482323542
+    isPrivate: false
+  data:
+    base_url: http://localhost:3000
+    token: ""
