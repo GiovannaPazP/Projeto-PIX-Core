@@ -9,7 +9,7 @@ README.md
 dist
 
 # Keep environment variables out of version control
-.env
+.env*
 
 /src/generated/prisma
 
@@ -24,3 +24,6 @@ skills-lock.json
 
 # arquivo de compilação
 tsconfig.build.tsbuildinfo
+
+# sobe .env.example
+!.env.example
