@@ -85,6 +85,8 @@ npx prisma db seed
 - `generate`: gera o Prisma Client utilizado pelo backend.
 - `db seed`: executa o preenchimento inicial para criar as contas fictícias de teste.
 
+É **obrigatório** executar `npx prisma db seed` antes de iniciar os testes, pois ele cria as contas fictícias necessárias para utilizar a aplicação.
+
 > É possível adicionar ou editar as contas fictícias modificando o arquivo `seed.ts` em `backend/prisma`.
 
 ### 3. Iniciar o backend
