@@ -179,7 +179,7 @@ export class PixService {
 
     //retornar a lista de transferencias
     async getTransfers(userId: number){
-        return this.prisma.transfer.findMany({
+        const transfers = await this.prisma.transfer.findMany({
             where: {
                 OR: [
                     {senderId: userId},
@@ -188,5 +188,10 @@ export class PixService {
             }
         });
 
+        //mapeia as transferencias para recebidas e enviadas
+        return transfers.map(transfer => ({
+            ...transfer,    //preserva os dados originais
+            direction: transfer.senderId === userId ? 'sent' : 'received'
+        }));
     }
 }

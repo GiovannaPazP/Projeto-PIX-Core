@@ -69,7 +69,10 @@ async function logout(){
         </p>
 
         <p v-if="balance !== null"> 
-            Saldo: R$ {{ balance }}
+            Saldo: {{ Number(balance).toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            }) }}
         </p>
 
         <p v-if="errorMessage">

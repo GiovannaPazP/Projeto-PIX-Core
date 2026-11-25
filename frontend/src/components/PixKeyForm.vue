@@ -68,6 +68,9 @@ async function CreatePixKey(){
 
     <form class="pix-key" @submit.prevent="CreatePixKey">
 
+        <br></br>
+        <br></br>
+        <h2>Criar Chave Pix</h2>
         <label for="keyType"> Tipo da Chave </label>
             <select id="keyType" v-model="keyType" required>
                 <option value="" disabled>Selecione um tipo</option>
